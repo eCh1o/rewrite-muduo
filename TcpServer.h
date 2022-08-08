@@ -10,8 +10,11 @@
 #include "EventLoopThreadPool.h"
 #include "Callback.h"
 #include "TcpConnection.h"
+#include "Buffer.h"
 
 #include <functional>
+#include <string>
+#include <memory>
 #include <atomic>
 #include <unordered_map>
 

@@ -74,5 +74,5 @@ public:
 
 private:
     int logLevel_; //下划线放在变量后面，不跟系统变量冲突
-    Logger();
+    Logger(){}
 };

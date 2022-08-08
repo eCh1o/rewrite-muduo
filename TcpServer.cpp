@@ -22,7 +22,8 @@ TcpServer::TcpServer(EventLoop *loop,
       threadPool_(new EventLoopThreadPool(loop, name_)),
       connectioncallback_(),
       messagecallback_(),
-      nextConnId_(1)
+      nextConnId_(1),
+      started_(0)
 {
     //当有新用户连接时，会执行TcpServer::newConnection回调
     acceptor_->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this,
@@ -32,12 +33,12 @@ TcpServer::TcpServer(EventLoop *loop,
 
 TcpServer::~TcpServer()
 {
-    for(auto &item : connections_)
+    for (auto &item : connections_)
     {
         TcpConnectionptr conn(item.second);
         item.second.reset();
         //销毁连接
-        conn->getLoop()->runInLoop(std::bind(&TcpConnection::connectDestroy,conn));
+        conn->getLoop()->runInLoop(std::bind(&TcpConnection::connectDestroy, conn));
     }
 }
 
@@ -92,14 +93,14 @@ void TcpServer::newConnection(int sockfd, const InetAddress &peerAddr)
 
 void TcpServer::removeConnection(const TcpConnectionptr &conn)
 {
-    loop_->runInLoop(std::bind(&TcpServer::removeConnectionInLoop,this,conn));
+    loop_->runInLoop(std::bind(&TcpServer::removeConnectionInLoop, this, conn));
 }
 
 void TcpServer::removeConnectionInLoop(const TcpConnectionptr &conn)
 {
     LOG_INFO("TcpServer::removeConnectionInLoop [%s] - connection %s \n",
-    name_.c_str(),conn->name().c_str());
+             name_.c_str(), conn->name().c_str());
     connections_.erase(conn->name());
-    EventLoop* ioLoop = conn->getLoop();
+    EventLoop *ioLoop = conn->getLoop();
     ioLoop->queueInLoop(std::bind(&TcpConnection::connectDestroy, conn));
 }
