@@ -9,6 +9,7 @@
 #include "noncopyable.h"
 #include "EventLoopThreadPool.h"
 #include "Callback.h"
+#include "TcpConnection.h"
 
 #include <functional>
 #include <atomic>

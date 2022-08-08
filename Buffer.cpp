@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <sys/uio.h>
+#include <unistd.h>
 
 /*
  从fd上读取数据，poller工作模式是LT
@@ -28,11 +29,21 @@ ssize_t Buffer::readFd(int fd, int *saveErrno)
     {
         writerIndex_ += n;
     }
-    else //extrabuf里面写入了数据
+    else // extrabuf里面写入了数据
     {
         writerIndex_ = buffer_.size();
-        append(extrabuf, n - writable); //writeindex_开始写n - writable大小的数据
+        append(extrabuf, n - writable); // writeindex_开始写n - writable大小的数据
     }
 
+    return n;
+}
+
+ssize_t Buffer::writeFd(int fd, int *savedErrno)
+{
+    ssize_t n = ::write(fd, peek(), readableBytes());
+    if (n < 0)
+    {
+        *savedErrno = errno;
+    }
     return n;
 }

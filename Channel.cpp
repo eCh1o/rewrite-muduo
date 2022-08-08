@@ -22,7 +22,8 @@ Channel::~Channel()
 {
 }
 
-// channel的tie方法什么时候调用过
+// channel的tie方法什么时候调用过，一个TcpConnection新连接创建的时候
+//TcpConnection绑定管理了一个Channel
 void Channel::tie(const std::shared_ptr<void> &obj)
 {
     tie_ = obj;
@@ -58,7 +59,7 @@ void Channel::handleEvent(Timestamp receivetime)
     }
 }
 
-//根据poller统治的channel发生的具体事件，有channel负责调用具体的回调操作
+//根据poller通知的channel发生的具体事件，有channel负责调用具体的回调操作
 void Channel::handleEventWithGuard(Timestamp receivetime)
 {
     LOG_INFO("channel handleEvent revents:%d\n", revents_);
